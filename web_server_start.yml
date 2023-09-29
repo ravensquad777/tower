@@ -1,0 +1,58 @@
+---
+- hosts: tier1
+  become: true
+  name: Installing and starting vsftpd FTP server
+  tasks:
+  - name: Installing FTP server    
+    package:   
+      name: vsftpd
+      state: latest
+  
+  - name: Starting FTP server process
+    service:
+      name: vsftpd    
+      state: started
+      enabled: true
+
+  - name: Installing firewall UFW on Debian
+    package:
+      name: ufw
+      state: latest
+    when: ansible_distribution == 'Debian'
+
+  - name: Enable SSH port on Debian firewall
+    ufw:
+      rule: allow
+      port: 22
+    when: ansible_distribution == 'Debian'
+  
+  - name: Starting UFW firewall on Debian
+    service:
+      name: ufw
+      state: started
+      enabled: true  
+    when: ansible_distribution == 'Debian'
+    
+  - name: Add FTP service to permited on UFW firewall
+    ufw:      
+      rule: allow
+      port: 20
+    when: ansible_distribution == 'Debian'
+
+  - name: Starting firewall daemon on CentOS
+    service:
+      name: firewalld
+      enabled: true
+      state: started
+    when: ansible_distribution == 'CentOS'
+
+  - name: Add FTP port on CentOS firewall to permited rules
+    firewalld:
+      state: enabled
+      service: ftp
+      immediate: yes
+      permanent: yes
+    when: ansible_distribution == 'CentOS'
+
+
+    

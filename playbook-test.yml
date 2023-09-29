@@ -1,0 +1,35 @@
+---
+- name: Test task
+  hosts: tier1
+  tasks:
+  - ping:
+
+- hosts: tier1
+  become: true
+  tasks:
+    - name: Create file
+      file: path=/home/alex/file.txt state=touch
+
+- hosts: tier1
+  become: true
+  tasks:
+    - name: Create directory
+      file: path=/home/alex/ansible_dir state=directory mode=775 owner=alex
+
+- hosts: tier1
+  become: true
+  tasks:
+    - name: Delete file
+      file: 
+        path=~/file.txt state=absent,
+        path=/home/alex/file.txt state=absent
+
+- hosts: tier1
+  become: true
+  tasks:
+    - name: Delete directories
+      file: 
+        path=~/ansible_dir state=absent,
+        path=/home/alex/ansible_dir state=absent
+
+
