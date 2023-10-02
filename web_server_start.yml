@@ -1,22 +1,25 @@
 ---
 - hosts: tier1
   become: true
-  name: Installing and starting vsftpd FTP server
+  vars_files: vars_file.yml
+  name: Installing and starting {{ install_pkg }} server
   tasks:
-  - name: Installing FTP server    
+  - set_fact:
+      srvtype: "ftp"
+  - name: Installing {{ srvtype }} server
     package:   
-      name: vsftpd
+      name: "{{ install_pkg }}"
       state: latest
   
-  - name: Starting FTP server process
+  - name: Starting {{ srvtype }} server process
     service:
-      name: vsftpd    
+      name: "{{ install_pkg }}"    
       state: started
       enabled: true
 
-  - name: Installing firewall UFW on Debian
+  - name: Installing firewall {{ firewall_pkg }} on Debian
     package:
-      name: ufw
+      name: "{{ firewall_pkg }}"
       state: latest
     when: ansible_distribution == 'Debian'
 
@@ -26,14 +29,14 @@
       port: 22
     when: ansible_distribution == 'Debian'
   
-  - name: Starting UFW firewall on Debian
+  - name: Starting {{ firewall_pkg }} firewall on Debian
     service:
       name: ufw
       state: started
       enabled: true  
     when: ansible_distribution == 'Debian'
     
-  - name: Add FTP service to permited on UFW firewall
+  - name: Add {{ srvtype }} service to permited on {{ firewall_pkg }} firewall
     ufw:      
       rule: allow
       port: 20
@@ -46,10 +49,10 @@
       state: started
     when: ansible_distribution == 'CentOS'
 
-  - name: Add FTP port on CentOS firewall to permited rules
+  - name: Add {{ srvtype }} port on CentOS firewall to permited rules
     firewalld:
       state: enabled
-      service: ftp
+      service: "{{ srvtype }}"
       immediate: yes
       permanent: yes
     when: ansible_distribution == 'CentOS'
