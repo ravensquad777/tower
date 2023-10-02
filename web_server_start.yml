@@ -33,7 +33,7 @@
   
   - name: Starting {{ firewall_pkg }} firewall on Debian
     service:
-      name: ufw
+      name: "{{ firewall_pkg }}"
       state: started
       enabled: true  
     when: ansible_distribution == 'Debian'
