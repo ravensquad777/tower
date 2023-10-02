@@ -6,6 +6,8 @@
   tasks:
   - set_fact:
       srvtype: "ftp"
+      ssh_port: "22"
+      ftp_port: "20"
   - name: Installing {{ srvtype }} server
     package:   
       name: "{{ install_pkg }}"
@@ -26,7 +28,7 @@
   - name: Enable SSH port on Debian firewall
     ufw:
       rule: allow
-      port: 22
+      port: "{{ ssh_port }}"
     when: ansible_distribution == 'Debian'
   
   - name: Starting {{ firewall_pkg }} firewall on Debian
@@ -39,7 +41,7 @@
   - name: Add {{ srvtype }} service to permited on {{ firewall_pkg }} firewall
     ufw:      
       rule: allow
-      port: 20
+      port: "{{ ftp_port }}"
     when: ansible_distribution == 'Debian'
 
   - name: Starting firewall daemon on CentOS
