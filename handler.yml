@@ -1,0 +1,23 @@
+- name: handler execution
+  force_handlers: yes
+  hosts: rocky
+  tasks:
+    - name: Install web server
+      yum:
+        name: httpd
+        state: latest
+    - name: Copy index file into web server directory
+      copy:
+        src: /tmp/index.html
+        dest: /var/www/html/index.html
+      notify:
+      - restart_web
+    - name: Failed copying file
+      copy:
+        src: /tmp/nothing
+        dest: /var/www/html/nothing.html
+  handlers:
+    - name: restart_web
+      service:
+        name: httpd
+        state: restarted 

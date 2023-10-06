@@ -1,0 +1,15 @@
+---
+- name: Create user with credentials
+  hosts: tier1
+  vars_files: ~/pass_files/secret-pass.yml
+  tasks:
+  - name: Creating user {{ username }}
+    ansible.builtin.user: 
+      name: "{{ username }}" 
+      password: "{{ userpwd }}"
+
+  - name: Delete user {{ username }}
+    ansible.builtin.user:
+      name: "{{ username }}"
+      state: absent
+   
