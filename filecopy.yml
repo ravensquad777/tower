@@ -1,0 +1,27 @@
+---
+- name: Copy files to hosts and add some content to it
+  hosts: tier1
+  tasks:
+  - name: Copy source file to tmp directory on source hosts
+    copy:
+      src: /etc/hosts
+      dest: /tmp
+  - name: Add some content to copied file
+    blockinfile:
+      path: /tmp/hosts
+      block: |
+        192.168.2.140  host1.sample.com
+        192.168.2.141  host2.sample.com
+  - name: Generate md5 checksum
+    stat:
+      path: /tmp/hosts
+      checksum_algorithm: md5
+    register: controlsum
+  - name: Out checksum info
+    debug:
+      msg: "Checksum for file /tmp/hosts is {{ controlsum.stat.checksum }}"
+  - name: Fetch files to master host tmp directory
+    fetch:
+      src: /tmp/hosts
+      dest: /tmp
+
