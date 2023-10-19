@@ -1,0 +1,18 @@
+---
+- name: batch users making
+  hosts: tier1
+  tasks:
+  - name: create random credentials
+    vars:
+      password: "{{ lookup('password', 'credentials/' + item + 'length=9') }}"
+    user:
+     name: "{{ item }}"
+     password: "{{ password | password_hash('sha512') }}"
+     update_password: on_create
+    loop: "{{ query('lines', 'cat users.txt') }}"
+  - name: clean up random users
+    user:
+      name: "{{ item }}"
+      state: absent
+      remove: true
+    loop: "{{ query('lines', 'cat users.txt') }}" 

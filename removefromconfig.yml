@@ -1,0 +1,14 @@
+---
+- name: remove from sudoers forced security for the work user
+  hosts: all
+  tasks:
+  - name:
+    lineinfile:
+      path: "/etc/sudoers"
+      regexp: "^Defaults timestamp"
+      state: absent
+  - name: add no password option for sudo user
+    copy:   
+      content: "alex ALL=(ALL:ALL) NOPASSWD=ALL"
+      dest: "/etc/sudoers.d/alex"
+       

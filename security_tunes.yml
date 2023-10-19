@@ -1,0 +1,21 @@
+---
+- name: Security tunes
+  hosts: 
+  - tier1
+  - tier2  
+  tasks:
+  - name: Delete sudoers nopassword file
+    file:
+      name: /etc/sudoers.d/alex
+      state: absent
+  - name: Add custom sudoers params for user
+    copy:
+      dest: /etc/sudoers.d/alex
+      content: 'alex  ALL=(ALL)  ALL'
+  - name: Add security settings to sudoers file
+    lineinfile:
+      path: /etc/sudoers
+      line: 'Defaults timestamp_type=global,timestamp_timeout=120,!requiretty'
+      regexp: '^Default'
+      state: present
+      validate: /usr/sbin/visudo -cf %s   

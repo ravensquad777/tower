@@ -1,0 +1,14 @@
+---
+- name: get user ssh data 
+  hosts: tier1
+  vars:
+    users:
+    - alex
+    - ansible
+  tasks:
+  - name: get data 
+    authorized_key:
+      user: "{{ item }}"
+      key: "{{ lookup('file', item + '/id_rsa.pub') }}"
+    loop: "{{ users }}" 
+     
